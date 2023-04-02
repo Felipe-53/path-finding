@@ -6,49 +6,87 @@ type Result = {
   smallestDistanceFromStart: number;
 };
 
+class ProgressTracker {
+  private priorityQueue: PriorityQueue;
+  private results: Map<string, Result>;
+  private closedNodes: Set<string>;
+
+  constructor() {
+    this.priorityQueue = new PriorityQueue();
+    this.results = new Map();
+    this.closedNodes = new Set<string>();
+  }
+
+  openNode(label: string, result: Result) {
+    this.results.set(label, result);
+    this.priorityQueue.enqueue({
+      label,
+      distance: result.smallestDistanceFromStart,
+    });
+  }
+
+  updateNode(label: string, result: Result) {
+    this.results.set(label, result);
+    this.priorityQueue.update({
+      label,
+      distance: result.smallestDistanceFromStart,
+    });
+  }
+
+  getResult(label: string) {
+    const result = this.results.get(label);
+    if (result) return result;
+    return null;
+  }
+
+  getResults() {
+    return this.results;
+  }
+
+  dequeue() {
+    return this.priorityQueue.dequeue();
+  }
+
+  isClosedNode(label: string) {
+    return this.closedNodes.has(label);
+  }
+
+  closeNode(label: string) {
+    this.closedNodes.add(label);
+  }
+}
+
 export function shortestPathFinder(graph: Graph, sourceLabel: string) {
-  const openNodes = new PriorityQueue();
-  const results = new Map<string, Result>();
-  const closedNodes = new Set<string>();
+  const progressTracker = new ProgressTracker();
 
-  const vertex = graph.getVertex(sourceLabel);
-
-  openNodes.enqueue({
-    label: vertex.label,
-    distance: 0,
-  });
-
-  results.set(sourceLabel, {
+  progressTracker.openNode(sourceLabel, {
     previousNode: sourceLabel,
     smallestDistanceFromStart: 0,
   });
 
   let currentNode: Node | null;
-  while ((currentNode = openNodes.dequeue())) {
+  while ((currentNode = progressTracker.dequeue())) {
     const currentNodeLabel = currentNode.label;
     const currentVertex = graph.getVertex(currentNodeLabel);
 
     for (const adjacentVertex of currentVertex.adjacentVertices) {
-      if (closedNodes.has(adjacentVertex.vertex.label)) {
+      if (progressTracker.isClosedNode(adjacentVertex.vertex.label)) {
         continue;
       }
 
       const distanceToCurrentNode =
-        results.get(currentNodeLabel)!.smallestDistanceFromStart;
+        progressTracker.getResult(currentNodeLabel)!.smallestDistanceFromStart;
 
       const calculatedDistance = distanceToCurrentNode + adjacentVertex.weight;
 
-      const bestResultSoFar = results.get(adjacentVertex.vertex.label);
+      const bestResultSoFar = progressTracker.getResult(
+        adjacentVertex.vertex.label
+      );
 
       if (!bestResultSoFar) {
-        results.set(adjacentVertex.vertex.label, {
+        progressTracker.openNode(adjacentVertex.vertex.label, {
           previousNode: currentNodeLabel,
           smallestDistanceFromStart: calculatedDistance,
-        });
-
-        openNodes.enqueue({
-          distance: calculatedDistance,
-          label: adjacentVertex.vertex.label,
         });
 
         continue;
@@ -57,22 +95,17 @@ export function shortestPathFinder(graph: Graph, sourceLabel: string) {
       const shortestKnownDistance = bestResultSoFar.smallestDistanceFromStart;
 
       if (calculatedDistance < shortestKnownDistance) {
-        results.set(adjacentVertex.vertex.label, {
+        progressTracker.updateNode(adjacentVertex.vertex.label, {
           previousNode: currentNodeLabel,
           smallestDistanceFromStart: calculatedDistance,
-        });
-
-        openNodes.update({
-          label: adjacentVertex.vertex.label,
-          distance: calculatedDistance,
         });
       }
     }
 
-    closedNodes.add(currentNodeLabel);
+    progressTracker.closeNode(currentNodeLabel);
   }
 
-  return results;
+  return progressTracker.getResults();
 }
 
 const graph = new Graph();
