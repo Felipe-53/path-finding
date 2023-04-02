@@ -31,7 +31,7 @@ export class PriorityQueue {
   dequeue() {
     const result = this.items.shift();
     if (!result) return null;
-    return result;
+    return result.label;
   }
 
   update(node: Node) {
