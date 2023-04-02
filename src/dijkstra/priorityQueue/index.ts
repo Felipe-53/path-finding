@@ -1,5 +1,5 @@
 import { Graph } from "../../graph";
-import { Node, PriorityQueue } from "./PriorityQueue";
+import { PriorityQueue } from "./PriorityQueue";
 
 type Result = {
   previousNode: string;
