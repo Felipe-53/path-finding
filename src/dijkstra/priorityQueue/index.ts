@@ -25,13 +25,15 @@ export function shortestPathFinder(graph: Graph, sourceLabel: string) {
 
       const calculatedDistance = distanceToCurrentNode + adjacentNode.weight;
 
+      const newlyCalculatedResult: Result = {
+        previousNode: currentNodeLabel,
+        smallestDistanceFromStart: calculatedDistance,
+      };
+
       const bestResultSoFar = progressTracker.getResult(adjacentNodeLabel);
 
       if (!bestResultSoFar) {
-        progressTracker.openNode(adjacentNodeLabel, {
-          previousNode: currentNodeLabel,
-          smallestDistanceFromStart: calculatedDistance,
-        });
+        progressTracker.openNode(adjacentNodeLabel, newlyCalculatedResult);
 
         continue;
       }
@@ -39,10 +41,7 @@ export function shortestPathFinder(graph: Graph, sourceLabel: string) {
       const shortestKnownDistance = bestResultSoFar.smallestDistanceFromStart;
 
       if (calculatedDistance < shortestKnownDistance) {
-        progressTracker.updateNode(adjacentNodeLabel, {
-          previousNode: currentNodeLabel,
-          smallestDistanceFromStart: calculatedDistance,
-        });
+        progressTracker.updateNode(adjacentNodeLabel, newlyCalculatedResult);
       }
     }
 
