@@ -1,11 +1,6 @@
 import { Graph } from "../../graph";
 import { PriorityQueue } from "./PriorityQueue";
 
-type Result = {
-  previousNode: string;
-  smallestDistanceFromStart: number;
-};
-
 export function shortestPathFinder(graph: Graph, sourceLabel: string) {
   const progressTracker = new ProgressTracker();
 
@@ -56,6 +51,11 @@ export function shortestPathFinder(graph: Graph, sourceLabel: string) {
 
   return progressTracker.getResults();
 }
+
+type Result = {
+  previousNode: string;
+  smallestDistanceFromStart: number;
+};
 
 class ProgressTracker {
   private priorityQueue: PriorityQueue;
