@@ -1,10 +1,5 @@
 import { Graph } from "../../graph";
 
-type Result = {
-  previousNode: string;
-  smallestDistanceFromStart: number;
-};
-
 export function shortestPathFinder(graph: Graph, source: string) {
   const unvisitedNodes = initialUnvisitedNodesSet(graph);
 
@@ -51,6 +46,11 @@ export function shortestPathFinder(graph: Graph, source: string) {
 
   return results;
 }
+
+type Result = {
+  previousNode: string;
+  smallestDistanceFromStart: number;
+};
 
 function initialUnvisitedNodesSet(graph: Graph) {
   const unvisitedNodes = new Set<string>();
