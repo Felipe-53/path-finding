@@ -1,5 +1,5 @@
 import { Graph } from "./graph";
-import { shortestPathFinder } from "./dijkstra";
+import { shortestPathFinder } from "./dijkstra/original";
 
 const graph = new Graph();
 graph.addVertex("A");

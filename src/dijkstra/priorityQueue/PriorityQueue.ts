@@ -1,9 +1,9 @@
-interface Node {
+export interface Node {
   label: string;
-  cost: number;
+  distance: number;
 }
 
-class PriorityQueue {
+export class PriorityQueue {
   private items: Node[];
 
   constructor() {
@@ -11,12 +11,12 @@ class PriorityQueue {
   }
 
   enqueue(node: Node) {
-    const nodeCost = node.cost;
+    const nodeCost = node.distance;
 
     let added = false;
 
     for (let i = 0; i < this.items.length; i++) {
-      if (nodeCost < this.items[i].cost) {
+      if (nodeCost < this.items[i].distance) {
         this.items.splice(i, 0, node);
         added = true;
         break;
@@ -32,5 +32,15 @@ class PriorityQueue {
     const result = this.items.shift();
     if (!result) return null;
     return result;
+  }
+
+  update(node: Node) {
+    for (let i = 0; i < this.items.length; i++) {
+      if (node.label === this.items[i].label) {
+        this.items.splice(i, 1);
+        this.enqueue(node);
+        break;
+      }
+    }
   }
 }

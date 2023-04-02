@@ -1,4 +1,4 @@
-import { Graph } from "./graph";
+import { Graph } from "../../graph";
 
 type Result = {
   previousNode: string;
