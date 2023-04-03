@@ -21,6 +21,8 @@ export function shortestPathFinder(graph: Graph, source: string) {
     const currentNodeData = results.get(currentNode.label)!;
 
     for (const adjacentVertex of currentNode.adjacentVertices) {
+      if (!unvisitedNodes.has(adjacentVertex.vertex.label)) continue;
+
       const calculatedDistance =
         currentNodeData.smallestDistanceFromStart + adjacentVertex.weight;
 
